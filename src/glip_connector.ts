@@ -10,15 +10,14 @@ export interface IGlipConnectorSettings {
   server: string
   redirectUrl: string
   webhookUrl: string
+  botLookup(ownerId: string): any
 }
 
 export class GlipConnector implements IConnector {
   private onEventHandler: (events: IEvent[], cb?: (err: Error) => void) => void
-  private glip: any
+  private onDispatchEvents: (events: IEvent[], cb?: (events: IEvent[]) => void) => void
 
-  constructor(protected settings: IGlipConnectorSettings) {
-    this.glip = new Glip(this.settings)
-  }
+  constructor(protected settings: IGlipConnectorSettings) {}
 
   public listen() {
     return (req: IRequest, res: IResponse, next: () => void) : void => {
@@ -31,7 +30,15 @@ export class GlipConnector implements IConnector {
       }
       const verificationToken = req.header('verification-token')
       const body = req.body
-      this.glip.handleWebhook(verificationToken, body).then((message: any) => {
+      const botData = this.settings.botLookup(body.ownerId)
+      if (!botData) {
+        res.status(400)
+        res.end('{ "Error": "Need to authorization first"}')
+        next()
+        return
+      }
+      const glip = new Glip(this.settings, botData.token)
+      glip.handleWebhook(verificationToken, body).then((message: any): void => {
         res.status(200)
         res.end()
         this.processMessage(message);
@@ -49,10 +56,26 @@ export class GlipConnector implements IConnector {
 
   public listenOAuth() {
     return (req: IRequest, res: IResponse, next: () => void) => {
-      this.glip.handleOauth(req.query).then((data: any) => {
+      const glip = new Glip(this.settings)
+      glip.handleOauth(req.query).then((data: any) => {
         res.status(200)
         res.end('ok')
-        console.log(JSON.stringify(data))
+        const address = {
+          channelId: 'glip',
+          user: { id: data.owner_id, name: data.owner_id },
+          bot: { id: data.owner_id, name: 'Bot' },
+          conversation: { id: data.owner_id }
+        }
+        this.dispatchEvents([{
+          type: 'installationUpdate',
+          source: 'glip',
+          agent: 'botbuilder',
+          address,
+          user: { id: data.owner_id, name: data.owner_id },
+          sourceEvent: {
+            TokenData: { ...data },
+          }
+        }])
         next()
       }).catch((e: any) => {
         console.log(e)
@@ -91,6 +114,18 @@ export class GlipConnector implements IConnector {
     this.onEventHandler = handler;
   }
 
+  private dispatchEvents(events: IEvent[]) {
+    if (events.length > 0) {
+      if (this.onDispatchEvents) {
+        this.onDispatchEvents(events, (transforedEvents) => {
+          this.onEventHandler(transforedEvents)
+        })
+      } else {
+        this.onEventHandler(events)
+      }
+    }
+  }
+
   public send(messages: any[]): void  {
     messages.forEach((message) => {
       this.postMessage(message)
@@ -100,7 +135,11 @@ export class GlipConnector implements IConnector {
   public postMessage(message: any): void {
     const address = message.address
     const user = address.user
-    this.glip.send({
+    const bot = address.bot
+    const botData = this.settings.botLookup(bot.id)
+    const glip = new Glip(this.settings, botData.token)
+
+    glip.send({
       groupId: user.id,
       text: message.text
     })

@@ -13,14 +13,16 @@ export interface IGlipSettings {
 export default class Glip {
   private platform : any
 
-  constructor(protected settings: IGlipSettings) {
-    this.settings = settings
+  constructor(protected settings: IGlipSettings, protected token?: any) {
     const rcsdk = new RingCentral({
       appKey: this.settings.clientId,
       appSecret: this.settings.clientSecret,
       server: this.settings.server
     })
     this.platform = rcsdk.platform()
+    if (token) {
+      this.platform.auth().setData(this.token)
+    }
   }
 
   public async handleOauth(query: IOauthQuery): Promise<any> {

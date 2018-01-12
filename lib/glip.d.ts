@@ -9,8 +9,9 @@ export interface IGlipSettings {
 }
 export default class Glip {
     protected settings: IGlipSettings;
+    protected token: any;
     private platform;
-    constructor(settings: IGlipSettings);
+    constructor(settings: IGlipSettings, token?: any);
     handleOauth(query: IOauthQuery): Promise<any>;
     send(message: IGlipMessage): Promise<void>;
     handleWebhook(verificationToken: string, body: any): Promise<IGlipMessage>;
