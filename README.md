@@ -75,3 +75,13 @@ bot.dialog('/', function (session) {
   session.send("You said: %s", session.message.text)
 });
 ```
+
+## TODO
+
+- [x] Support Attachments
+- [x] Example with AI
+
+## Examples
+
+Take a look at the prebuilt example for more information [here](https://github.com/embbnux/botbuilder-glip/blob/master/examples/simple.js)
+
