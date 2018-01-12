@@ -78,8 +78,8 @@ bot.dialog('/', function (session) {
 
 ## TODO
 
-- [] Support Attachments
-- [] Example with AI
+- [ ] Support Attachments
+- [ ] Example with AI
 
 ## Examples
 
