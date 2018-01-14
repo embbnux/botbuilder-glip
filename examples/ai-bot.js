@@ -1,30 +1,10 @@
-# botbuilder-glip
-
-Microsoft Bot Framework connector for RingCentral Glip
-
-## Features
-
-* Ready for Microsoft Bot Framework V3
-* Oauth flow support
-* **No need a registered bot** on [dev.botframework.com](https://dev.botframework.com/), but require a ringcentral developer account, go to apply [free account](https://developer.ringcentral.com/)
-* Support private and public Glip bot app
-
-## Installation
-
-```
-npm install botbuilder-glip
-```
-
-## Usage
-
-```
 const builder = require('botbuilder')
 const restify = require('restify')
 const dotenv = require('dotenv')
 const fs = require('fs')
 const path = require('path')
 
-const { GlipConnector } = require('botbuilder-glip')
+const { GlipConnector } = require('../lib')
 
 dotenv.config()
 let botsData = {}
@@ -59,6 +39,7 @@ server.get('/oauth', connector.listenOAuth())
 server.post('/webhook', connector.listen())
 
 const bot = new builder.UniversalBot(connector)
+const recognizer = new builder.LuisRecognizer(process.env.LUIS_MODEL_URL)
 
 bot.on('installationUpdate', (event) => {
   console.log(`New bot installed: ${event.sourceEvent.TokenData.owner_id}`)
@@ -70,17 +51,15 @@ bot.on('installationUpdate', (event) => {
   fs.writeFileSync(botsDataFile, JSON.stringify(botsData)) // save token
 })
 
-bot.dialog('/', function (session) {
-  console.log('Get message from glip:', session.message)
-  session.send("You said: %s", session.message.text)
-});
-```
+const intents = new builder.IntentDialog({ recognizers: [recognizer] })
+  .matches('Translate.Translate', (session, args) => {
+    console.log(args.intent)
+    console.log(args.entities)
+    session.send('Translate', JSON.stringify(args.entities))
+  })
+  .onDefault((session) => {
+    console.log(session.message.text)
+    session.send('Sorry, I did not understand \'%s\'.', session.message.text)
+  })
 
-## TODO
-
-- [ ] Support Attachments
-
-## Examples
-
-* [Basic example](https://github.com/embbnux/botbuilder-glip/blob/master/examples/simple.js)
-* [Example with AI](https://github.com/embbnux/botbuilder-glip/blob/master/examples/ai-bot.js)
+bot.dialog('/', intents)
