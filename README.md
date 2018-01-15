@@ -1,5 +1,7 @@
 # botbuilder-glip
 
+[![NPM Version](https://img.shields.io/npm/v/botbuilder-glip.svg?style=flat-square)](https://www.npmjs.com/package/botbuilder-glip)
+
 Microsoft Bot Framework connector for RingCentral Glip
 
 ## Features
