@@ -10,6 +10,7 @@ export interface IGlipConnectorSettings {
   server: string
   redirectUrl: string
   webhookUrl: string
+  replyOnlyMentioned?: boolean
   botLookup(ownerId: string): any
 }
 
@@ -96,9 +97,9 @@ export class GlipConnector implements IConnector {
 
     address = {
       channelId: 'glip',
-      user: { id: message.groupId, name: message.groupId },
-      bot: { id: message.botId, name: 'Bot' },
-      conversation: { id: message.groupId }
+      user: { id: message.creatorId, name: message.creator && message.creator.name },
+      bot: { id: message.botId, name: message.bot && message.bot.name },
+      conversation: { id: message.groupId, name: message.group && message.group.name }
     }
 
     msg = new Message()
@@ -134,13 +135,13 @@ export class GlipConnector implements IConnector {
 
   public postMessage(message: any): void {
     const address = message.address
-    const user = address.user
+    const conversation = address.conversation
     const bot = address.bot
     const botData = this.settings.botLookup(bot.id)
     const glip = new Glip(this.settings, botData.token)
 
     glip.send({
-      groupId: user.id,
+      groupId: conversation.id,
       text: message.text
     })
   }
@@ -148,7 +149,7 @@ export class GlipConnector implements IConnector {
   public startConversation(address: IAddress, done: (err: Error, address?: IAddress) => void): void {
     const addr = {
       ...address,
-      conversation: { id: address.user.id }
+      conversation: { id: address.conversation.id }
     }
     done(null, addr);
   }

@@ -6,6 +6,7 @@ export interface IGlipSettings {
     server: string;
     redirectUrl: string;
     webhookUrl: string;
+    replyOnlyMentioned?: boolean;
 }
 export default class Glip {
     protected settings: IGlipSettings;
@@ -15,6 +16,7 @@ export default class Glip {
     handleOauth(query: IOauthQuery): Promise<any>;
     send(message: IGlipMessage): Promise<void>;
     handleWebhook(verificationToken: string, body: any): Promise<IGlipMessage>;
+    private getPerson(personId);
     private createSubscribe();
     private renewSubscription(id);
 }

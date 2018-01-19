@@ -8,6 +8,7 @@ export interface IGlipSettings {
   server: string
   redirectUrl: string
   webhookUrl: string
+  replyOnlyMentioned?: boolean
 }
 
 export default class Glip {
@@ -70,7 +71,39 @@ export default class Glip {
         // outbound message
         return
       }
+      if (!message.text) {
+        return
+      }
+      try {
+        message.creator = await this.getPerson(message.creatorId)
+        message.bot = await this.getPerson(message.botId)
+        const group = await this.platform.get(`/glip/groups/${message.groupId}`)
+        message.group = group.json()
+        const mentionedStr = `![:Person](${message.botId})`
+        if (this.settings.replyOnlyMentioned && message.group.members && message.group.members.length > 2) {
+          if (message.text && message.text.indexOf(mentionedStr) === -1) {
+            return
+          }
+        }
+        message.text = message.text.replace(mentionedStr, '')
+      } catch (e) {
+        console.error(e)
+      }
       return message
+    }
+  }
+
+  private async getPerson(personId) {
+    try {
+      const response = await this.platform.get(`/glip/persons/${personId}`)
+      const data = response.json()
+      return {
+        ...data,
+        name: `${data.firstName ? data.firstName : ''}${data.lastName ? ` ${data.lastName}` : ''}`
+      }
+    } catch (e) {
+      console.error(e)
+      return null
     }
   }
 
@@ -86,7 +119,7 @@ export default class Glip {
         address: this.settings.webhookUrl,
         verificationToken: this.settings.verificationToken
       },
-      expiresIn: 3600 // 1 days
+      expiresIn: 86400 // 1 days
     }
     try {
       await this.platform.post('/subscription', requestData)
