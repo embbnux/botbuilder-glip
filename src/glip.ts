@@ -27,7 +27,6 @@ export default class Glip {
   }
 
   public async handleOauth(query: IOauthQuery): Promise<any> {
-    console.log(query)
     if (!query.code) {
       throw new Error('Param error')
     }
@@ -93,7 +92,7 @@ export default class Glip {
     }
   }
 
-  private async getPerson(personId) {
+  private async getPerson(personId: string) {
     try {
       const response = await this.platform.get(`/glip/persons/${personId}`)
       const data = response.json()

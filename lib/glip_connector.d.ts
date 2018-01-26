@@ -15,12 +15,12 @@ export declare class GlipConnector implements IConnector {
     private onEventHandler;
     private onDispatchEvents;
     constructor(settings: IGlipConnectorSettings);
-    listen(): (req: IRequest, res: IResponse, next: () => void) => void;
+    listen(): (req: IRequest, res: IResponse, next: () => void) => Promise<void>;
     listenOAuth(): (req: IRequest, res: IResponse, next: () => void) => void;
     processMessage(message: any): this;
     onEvent(handler: (events: IEvent[], cb?: (err: Error) => void) => void): void;
     private dispatchEvents(events);
     send(messages: any[]): void;
-    postMessage(message: any): void;
+    postMessage(message: any): Promise<void>;
     startConversation(address: IAddress, done: (err: Error, address?: IAddress) => void): void;
 }

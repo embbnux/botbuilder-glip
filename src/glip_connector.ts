@@ -21,7 +21,7 @@ export class GlipConnector implements IConnector {
   constructor(protected settings: IGlipConnectorSettings) {}
 
   public listen() {
-    return (req: IRequest, res: IResponse, next: () => void) : void => {
+    return async (req: IRequest, res: IResponse, next: () => void) : Promise<void> => {
       const validationToken = req.header('validation-token')
       if (validationToken) {
         res.status(200)
@@ -31,7 +31,7 @@ export class GlipConnector implements IConnector {
       }
       const verificationToken = req.header('verification-token')
       const body = req.body
-      const botData = this.settings.botLookup(body.ownerId)
+      const botData = await this.settings.botLookup(body.ownerId)
       if (!botData) {
         res.status(400)
         res.end('{ "Error": "Need to authorization first"}')
@@ -39,19 +39,17 @@ export class GlipConnector implements IConnector {
         return
       }
       const glip = new Glip(this.settings, botData.token)
-      glip.handleWebhook(verificationToken, body).then((message: any): void => {
+      try {
+        const message = await glip.handleWebhook(verificationToken, body)
         res.status(200)
         res.end()
         this.processMessage(message);
         next()
-        if (message) {
-          return
-        }
-      }).catch(() => {
+      } catch (e) {
         res.status(400)
         res.end()
         next()
-      })
+      }
     }
   }
 
@@ -133,11 +131,11 @@ export class GlipConnector implements IConnector {
     })
   }
 
-  public postMessage(message: any): void {
+  public async postMessage(message: any): Promise<void> {
     const address = message.address
     const conversation = address.conversation
     const bot = address.bot
-    const botData = this.settings.botLookup(bot.id)
+    const botData = await this.settings.botLookup(bot.id)
     const glip = new Glip(this.settings, botData.token)
 
     glip.send({
