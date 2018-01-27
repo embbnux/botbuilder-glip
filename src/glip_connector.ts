@@ -40,11 +40,11 @@ export class GlipConnector implements IConnector {
       }
       const glip = new Glip(this.settings, botData.token)
       try {
-        const message = await glip.handleWebhook(verificationToken, body)
         res.status(200)
         res.end()
-        this.processMessage(message);
         next()
+        const message = await glip.handleWebhook(verificationToken, body)
+        this.processMessage(message);
       } catch (e) {
         res.status(400)
         res.end()
@@ -105,6 +105,7 @@ export class GlipConnector implements IConnector {
                 .timestamp(message.creationTime)
                 .entities();
     msg = msg.text(message.text)
+    msg.mentioned = message.mentioned
     this.onEventHandler([msg.toMessage()]);
     return this;
   }
