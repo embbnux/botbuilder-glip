@@ -44,6 +44,12 @@ export default class Glip {
   }
 
   public async send(message: IGlipMessage): Promise<void> {
+    if (!message) {
+      return
+    }
+    if (!message.text || !message.text.length === 0) {
+      return
+    }
     try {
       await this.platform.post('/glip/posts', {
         groupId: message.groupId, text: message.text
