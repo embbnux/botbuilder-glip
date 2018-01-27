@@ -17,6 +17,7 @@ export declare class GlipConnector implements IConnector {
     constructor(settings: IGlipConnectorSettings);
     listen(): (req: IRequest, res: IResponse, next: () => void) => Promise<void>;
     listenOAuth(): (req: IRequest, res: IResponse, next: () => void) => void;
+    private handleWebhook(bot, body, verificationToken);
     processMessage(message: any): this;
     onEvent(handler: (events: IEvent[], cb?: (err: Error) => void) => void): void;
     private dispatchEvents(events);

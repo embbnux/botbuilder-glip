@@ -38,18 +38,10 @@ export class GlipConnector implements IConnector {
         next()
         return
       }
-      const glip = new Glip(this.settings, botData.token)
-      try {
-        res.status(200)
-        res.end()
-        next()
-        const message = await glip.handleWebhook(verificationToken, body)
-        this.processMessage(message);
-      } catch (e) {
-        res.status(400)
-        res.end()
-        next()
-      }
+      res.status(200)
+      res.end('ok')
+      next()
+      this.handleWebhook(botData, body, verificationToken)
     }
   }
 
@@ -77,11 +69,27 @@ export class GlipConnector implements IConnector {
         }])
         next()
       }).catch((e: any) => {
-        console.log(e)
+        console.error(e)
         res.status(500)
         res.end()
         next()
       })
+    }
+  }
+
+  private async handleWebhook(bot: any, body: any, verificationToken: any) {
+    if (!bot || !bot.token) {
+      return
+    }
+    try {
+      const glip = new Glip(this.settings, bot.token)
+      const message = await glip.handleWebhook(verificationToken, body)
+      if (!message) {
+        return;
+      }
+      this.processMessage(message);
+    } catch (e) {
+      console.error(e)
     }
   }
 

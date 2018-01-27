@@ -68,10 +68,10 @@ export default class Glip {
       message.botId = body.ownerId
       if (message.botId === message.creatorId) {
         // outbound message
-        return
+        return null
       }
       if (!message.text) {
-        return
+        return null
       }
       try {
         message.creator = await this.getPerson(message.creatorId)
@@ -82,7 +82,7 @@ export default class Glip {
         const mentioned = message.text && (message.text.indexOf(mentionedStr) > -1)
         if (this.settings.replyOnlyMentioned && message.group.members && message.group.members.length > 2) {
           if (!mentioned) {
-            return
+            return null
           }
         }
         message.mentioned = mentioned
