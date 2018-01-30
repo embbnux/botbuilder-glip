@@ -19,7 +19,7 @@ npm install botbuilder-glip
 
 ## Usage
 
-```
+```js
 const builder = require('botbuilder')
 const restify = require('restify')
 const dotenv = require('dotenv')
@@ -85,4 +85,5 @@ bot.dialog('/', function (session) {
 ## Examples
 
 * [Basic example](https://github.com/embbnux/botbuilder-glip/blob/master/examples/simple.js)
-* [Example with AI](https://github.com/embbnux/botbuilder-glip/blob/master/examples/ai-bot.js)
+* [Example with LUIS AI](https://github.com/embbnux/botbuilder-glip/blob/master/examples/ai-bot.js)
+* [Example with Dialogflow AI and mongodb](https://github.com/embbnux/translate-bot)
