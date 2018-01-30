@@ -87,3 +87,7 @@ bot.dialog('/', function (session) {
 * [Basic example](https://github.com/embbnux/botbuilder-glip/blob/master/examples/simple.js)
 * [Example with LUIS AI](https://github.com/embbnux/botbuilder-glip/blob/master/examples/ai-bot.js)
 * [Example with Dialogflow AI and mongodb](https://github.com/embbnux/translate-bot)
+
+## Tutorials
+ 
+* [Video](https://www.youtube.com/watch?v=WwuBh40dM9o)
