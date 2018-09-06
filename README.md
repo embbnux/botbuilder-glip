@@ -9,7 +9,7 @@ Microsoft Bot Framework connector for RingCentral Glip
 * Ready for Microsoft Bot Framework V3
 * Oauth flow support
 * **No need a registered bot** on [dev.botframework.com](https://dev.botframework.com/), but require a ringcentral developer account, go to apply [free account](https://developer.ringcentral.com/)
-* Support private and public Glip bot app
+* Support public Glip bot app
 
 ## Installation
 
