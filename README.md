@@ -91,10 +91,6 @@ bot.dialog('/', function (session) {
 });
 ```
 
-## TODO
-
-- [ ] Support Attachments
-
 ## Examples
 
 * [Basic example](https://github.com/embbnux/botbuilder-glip/blob/master/examples/simple.js)
