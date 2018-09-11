@@ -149,7 +149,8 @@ export class GlipConnector implements IConnector {
 
     glip.send({
       groupId: conversation.id,
-      text: message.text
+      text: message.text,
+      attachments: message.attachments
     })
   }
 

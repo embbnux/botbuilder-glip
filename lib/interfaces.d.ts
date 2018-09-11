@@ -3,7 +3,8 @@ export interface IOauthQuery {
 }
 export interface IGlipMessage {
     groupId: string;
-    text: string;
+    text?: string;
+    attachments?: any[];
 }
 export interface IResponse {
     status(code: number): void;

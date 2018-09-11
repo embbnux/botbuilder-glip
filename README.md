@@ -74,6 +74,14 @@ bot.on('installationUpdate', (event) => {
 
 bot.dialog('/', function (session) {
   console.log('Get message from glip:', session.message)
+  session.send({
+    text: `You said: ${session.message.text}`,
+    attachments: [{
+      type: 'Card',
+      fallback: 'Text',
+      text: session.message.text,
+    }]
+  })
   session.send("You said: %s", session.message.text)
 });
 ```
