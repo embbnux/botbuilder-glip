@@ -35,7 +35,12 @@ const connector = new GlipConnector({
   webhookUrl: `${process.env.GLIP_BOT_SERVER}/webhook`
 })
 
+// For public glip bot
 server.get('/oauth', connector.listenOAuth())
+
+//For private glip bot
+server.post('/oauth', connector.listenOAuth())
+
 server.post('/webhook', connector.listen())
 
 const bot = new builder.UniversalBot(connector)

@@ -48,13 +48,13 @@ export class GlipConnector implements IConnector {
   public listenOAuth() {
     return (req: IRequest, res: IResponse, next: () => void) => {
       const glip = new Glip(this.settings)
-      glip.handleOauth(req.query).then((data: any) => {
+      glip.handleOauth(req.query, req.body).then((data: any) => {
         res.status(200)
         res.end('ok')
         const address = {
           channelId: 'glip',
-          user: { id: data.owner_id, name: data.owner_id },
-          bot: { id: data.owner_id, name: 'Bot' },
+          user: { id: data.owner_id, name: data.owner_name },
+          bot: { id: data.owner_id, name: data.owner_name },
           conversation: { id: data.owner_id }
         }
         this.dispatchEvents([{
@@ -62,7 +62,7 @@ export class GlipConnector implements IConnector {
           source: 'glip',
           agent: 'botbuilder',
           address,
-          user: { id: data.owner_id, name: data.owner_id },
+          user: { id: data.owner_id, name: data.owner_name },
           sourceEvent: {
             TokenData: { ...data },
           }

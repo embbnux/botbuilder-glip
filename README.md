@@ -9,7 +9,7 @@ Microsoft Bot Framework connector for RingCentral Glip
 * Ready for Microsoft Bot Framework V3
 * Oauth flow support
 * **No need a registered bot** on [dev.botframework.com](https://dev.botframework.com/), but require a ringcentral developer account, go to apply [free account](https://developer.ringcentral.com/)
-* Support public Glip bot app
+* Support public and private Glip bot app
 
 ## Installation
 
@@ -57,7 +57,12 @@ const connector = new GlipConnector({
   webhookUrl: `${process.env.GLIP_BOT_SERVER}/webhook`
 })
 
+// For public glip bot
 server.get('/oauth', connector.listenOAuth())
+
+//For private glip bot
+server.post('/oauth', connector.listenOAuth())
+
 server.post('/webhook', connector.listen())
 
 const bot = new builder.UniversalBot(connector)
@@ -97,5 +102,5 @@ bot.dialog('/', function (session) {
 * [Example with Dialogflow AI and mongodb](https://github.com/embbnux/translate-bot)
 
 ## Tutorials
- 
+
 * [Video](https://www.youtube.com/watch?v=WwuBh40dM9o)

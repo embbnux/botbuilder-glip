@@ -1,6 +1,12 @@
 export interface IOauthQuery {
     code: string;
 }
+export interface IOauthBody {
+    access_token: string;
+    creator_extension_id: string;
+    creator_account_id: string;
+    client_id: string;
+}
 export interface IGlipMessage {
     groupId: string;
     text?: string;
