@@ -96,6 +96,7 @@ bot.dialog('/', function (session) {
 There are two ways to create Webhook subscription:
   * Create with Bot codes
   * Create with Bot Webhook Setting in RingCentral Developer website
+
 If you enable Bot Webhook in RingCentral Developer website, it will create webhook subscription to your webhook URI when you add a bot.
 
 The `GlipConnector` will create Webhook subscription after authrization. So it is **recommended** to disable the Bot Webhook setting in RingCentral Developer website, or you will have two webhook subscription.
