@@ -11,6 +11,7 @@ export interface IGlipConnectorSettings {
   redirectUrl: string
   webhookUrl: string
   replyOnlyMentioned?: boolean
+  disableSubscribe?: boolean
   botLookup(ownerId: string): any
 }
 
@@ -86,6 +87,9 @@ export class GlipConnector implements IConnector {
       const message = await glip.handleWebhook(verificationToken, body)
       if (!message) {
         return;
+      }
+      if (bot.identity) {
+        message.bot = bot.identity
       }
       this.processMessage(message);
     } catch (e) {

@@ -9,6 +9,7 @@ export interface IGlipSettings {
   redirectUrl: string
   webhookUrl: string
   replyOnlyMentioned?: boolean
+  disableSubscribe?: boolean
 }
 
 export default class Glip {
@@ -40,7 +41,7 @@ export default class Glip {
         }
         const extension = await this.getCurrentExtension()
         token.owner_name = extension.name
-        await this.createSubscribe()
+        this.createSubscribe()
         return token
       } catch (e) {
         throw e
@@ -59,7 +60,7 @@ export default class Glip {
         const extension = await this.getCurrentExtension()
         token.owner_id = `${extension.id}`
         token.owner_name = extension.name
-        await this.createSubscribe()
+        this.createSubscribe()
         return token
       } catch (e) {
         throw e
@@ -110,7 +111,7 @@ export default class Glip {
       }
       try {
         message.creator = await this.getPerson(message.creatorId)
-        message.bot = await this.getPerson(message.botId)
+        message.bot = { id: message.botId, name: '' }
         const group = await this.platform.get(`/glip/groups/${message.groupId}`)
         message.group = group.json()
         const mentionedStr = `![:Person](${message.botId})`
@@ -150,6 +151,10 @@ export default class Glip {
   }
 
   private async createSubscribe(): Promise<void> {
+    if (this.settings.disableSubscribe) {
+      return
+    }
+    console.log('creating subscription')
     const requestData = {
       eventFilters: [
         '/restapi/v1.0/glip/posts',
@@ -165,6 +170,7 @@ export default class Glip {
     }
     try {
       await this.platform.post('/subscription', requestData)
+      console.log('subscription created.')
     } catch (e) {
       console.error(e)
     }
@@ -172,7 +178,9 @@ export default class Glip {
 
   private async renewSubscription(id: any): Promise<any> {
     try {
+      console.log('renewing subscription:', id)
       await this.platform.post(`/subscription/${id}/renew`)
+      console.log('subscription renewed', id)
     } catch (e) {
       console.error(e);
     }

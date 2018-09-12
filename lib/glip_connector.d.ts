@@ -8,6 +8,7 @@ export interface IGlipConnectorSettings {
     redirectUrl: string;
     webhookUrl: string;
     replyOnlyMentioned?: boolean;
+    disableSubscribe?: boolean;
     botLookup(ownerId: string): any;
 }
 export declare class GlipConnector implements IConnector {

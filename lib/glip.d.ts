@@ -7,6 +7,7 @@ export interface IGlipSettings {
     redirectUrl: string;
     webhookUrl: string;
     replyOnlyMentioned?: boolean;
+    disableSubscribe?: boolean;
 }
 export default class Glip {
     protected settings: IGlipSettings;

@@ -47,7 +47,7 @@ server.post('/webhook', connector.listen())
 const bot = new builder.UniversalBot(connector)
 
 bot.on('installationUpdate', (event) => {
-  console.log(`New bot installed: ${event.sourceEvent.TokenData.owner_id}`)
+  console.log(`New bot installed: ${event.sourceEvent.TokenData.owner_name}`)
 
   botsData[event.sourceEvent.TokenData.owner_id] = {
     identity: event.address.bot,
