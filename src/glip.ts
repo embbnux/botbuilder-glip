@@ -100,7 +100,7 @@ export default class Glip {
     }
 
     const message = body.body
-    if (body.event === '/restapi/v1.0/glip/posts' && message) {
+    if (message && message.eventType.indexOf('Post') === 0) {
       message.botId = body.ownerId
       if (message.botId === message.creatorId) {
         // outbound message
